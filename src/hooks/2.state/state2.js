@@ -27,6 +27,7 @@ function State2() {
     Comments: [
       {
         User: {
+          id:1,
           nickname: "김사과",
         },
         content: "오늘도 화이팅입니다!",
@@ -34,6 +35,7 @@ function State2() {
       },
       {
         User: {
+          id:2,
           nickname: "반하나",
         },
         content: "오늘도 화이팅입니다!",
@@ -41,6 +43,7 @@ function State2() {
       },
       {
         User: {
+          id:3,
           nickname: "오렌지",
         },
         content: "오늘도 화이팅입니다!",
@@ -48,6 +51,7 @@ function State2() {
       },
       {
         User: {
+          id:4,
           nickname: "이멜론",
         },
         content: "오늘도 화이팅입니다!",
@@ -55,6 +59,7 @@ function State2() {
       },
       {
         User: {
+          id:5,
           nickname: "박수박",
         },
         content: "오늘도 화이팅입니다!",
@@ -63,47 +68,54 @@ function State2() {
     ],
   });
 
-  const [comments, setComments] = useState(post.Comments);
-  
-  const [name, setName] = useState("");
-  const [com, setCom] = useState("");
 
-  const getName = (e) => {
-    setName(e.target.value);
-  };
+  //Q2
 
-  const getCom = (e) => {
-    setCom(e.target.value);
-  };
+  const [writer, setWriter] = useState("");
+  const [content, setContent] = useState("");
 
-  const onAddClick = () => {
-    const newPost = post.Comments.push({
-      
+  const handleAddComment = () => {
+    const newComment = {
       User: {
-        nickname: name,
+        nickname: writer,
+        id: Math.floor(Math.random() * 100000 + 6),
       },
-      content: com,
+      content: content,
       myComment: true,
-    });
-
-    setPost({ ...post, newPost });
+    };
+    console.log(newComment.User.id);
+    setPost((prevState) => ({
+      ...prevState,
+      Comments: [...prevState.Comments, newComment],
+    }));
   };
+/*
+ Comments 배열에 새로운 댓글 객체를 추가
+ 댓글 작성시 작성자와 내용을 저장  input 요소의 value 값
 
-  const onDeleteClick = (index) => {
-    console.log('-----------------------', index);
-    let survived = comments.filter((item, idx) => ( idx !== index ));
-    setComments(survived);
-  }
+*/
+const handleDelete = (id) => {
+  setPost((prevState) => ({
+    ...prevState,
+    Comments: prevState.Comments.filter((comment) => comment.User.id !== id),
+  }));
+  console.log(id);
+};
+/*
+이전 상태값에서 Comments 배열만 새로운 배열로 교체
+
+ Comments 배열에서 삭제하고자 하는 댓글의 User.id가 id와 같지 않은 항목들만 추출
+
+*/
+
 
   return (
     <S.Wrapper>
       <h1>문제2</h1>
-
       <S.PostBox>
         <S.PostTitle>제목: {post.title}</S.PostTitle>
         <S.PostContent>내용: {post.content}</S.PostContent>
       </S.PostBox>
-
       <S.PostInfo>
         <p>
           작성자: <span>{post.User.nickname}</span>
@@ -115,23 +127,31 @@ function State2() {
           작성자 키: <span>{post.User.height}</span>
         </p>
       </S.PostInfo>
-
       <div>
         <p>
           댓글 수: <span>{post.Comments.length}</span>
         </p>
-        <input placeholder="작성자" onChange={getName} />
-        <input placeholder="댓글 내용" onChange={getCom} />
-        <button onClick={onAddClick}>댓글 작성</button>
+        <input placeholder="작성자" value={writer} onChange={(e) => setWriter(e.target.value)} />
+        <input placeholder="댓글 내용" value={content} onChange={(e) => setContent(e.target.value)} />
+        <button onClick={handleAddComment}>댓글 작성</button>
       </div>
+      <S.CommentList>
+        {/* list */}
+        {/* 예시 데이터 */}
+        {post.Comments.map((comment) => (
+          <Comment
+          comment={comment}
+          post={post}
+          handleDelete={handleDelete}
+          />
+          ))
+          }
 
-      {comments.map((com, index) => (
-        <S.CommentList >
-          <Comment com={com} index={index} onDeleteClick={onDeleteClick}/>
-        </S.CommentList>
-      ))}
+          
+      </S.CommentList>
     </S.Wrapper>
   );
+
 }
 export default State2;
 
